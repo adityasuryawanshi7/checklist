@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Material Design Task Manager</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <style>
+      * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Roboto", sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #121212;
+    color: white;
+    padding: 8px;
+}
+
+.container {
+    background: #1e1e1e;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    width: 350px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 10px;
+    color: #fff;
+    font-size: 26px;
+    font-weight: 500;
+}
+
+.title-container {
+    display: flex;
+    align-items: center;
+    background: #6200ea;
+    color: white;
+    padding: 6px;
+    border-radius: 5px;
+    margin-bottom: 6px;
+}
+
+.title-container input {
+    flex-grow: 1;
+    border: none;
+    background: transparent;
+    color: white;
+    font-size: 12px;
+    outline: none;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+button {
+    width: 100%;
+    padding: 8px;
+    background: #6200ea;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 6px;
+}
+
+button:hover {
+    background: #5a00d1;
+}
+
+.category-container {
+    background: #2c2c2c;
+    padding: 8px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    margin-top: 12px;
+}
+
+.category-title {
+    font-size: 14px;
+    color: #fff;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.task-container {
+    background: #2c2c2c;
+    padding: 6px;
+    border-radius: 5px;
+    margin-top: 6px;
+    transition: background 0.3s;
+}
+
+.task {
+    display: flex;
+    align-items: center;
+    padding: 6px;
+    cursor: pointer;
+    border-bottom: 1px solid #444;
+    transition: background 0.3s ease;
+}
+
+.task:hover {
+    background: #333;
+}
+
+.task:last-child {
+    border-bottom: none;
+}
+
+.task input[type="checkbox"] {
+    width: 13px;
+    height: 13px;
+    margin-right: 6px;
+    cursor: pointer;
+    transition: transform 0.2s;
+
+
+}
+
+.task input[type="checkbox"]:checked {
+    background-color: #6200ea;
+    transform: scale(1.2);
+}
+
+.task span {
+    flex-grow: 1;
+    font-size: 12px;
+    color: #fcf9f9;
+    transition: color 0.3s;
+}
+
+.task input[type="checkbox"]:checked + span {
+    text-decoration: line-through;
+    color: #aaa;
+}
+
+.task-input-container {
+    display: flex;
+    margin-top: 6px;
+    padding: 6px;
+    background: #333;
+    border-radius: 5px;
+}
+
+.task-input-container input {
+    flex-grow: 1;
+    padding: 6px;
+    border-radius: 5px;
+    border: 1px solid #444;
+    background: #222;
+    color: white;
+    font-size: 12px;
+}
+
+.task-input-container button {
+    padding: 6px;
+    background: #6200ea;
+    color: white;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    margin-left: 6px;
+    transition: background 0.3s;
+}
+
+.task-input-container button:hover {
+    background: #5a00d1;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .container {
+        width: 100%;
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 14px;
+    }
+
+    .category-container {
+        padding: 6px;
+    }
+
+    .title-container input {
+        font-size: 10px;
+    }
+
+    button {
+        padding: 6px;
+        font-size: 10px;
+    }
+
+    .task-container {
+        padding: 4px;
+    }
+
+    .task-input-container input {
+        padding: 4px;
+    }
+
+    .task-input-container button {
+        padding: 4px;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Check-list</h1>
+        <div class="title-container">
+            <i class="material-icons">format_list_bulleted</i>
+            <input type="text" id="categoryInput" placeholder="Enter Category Title...">
+        </div>
+        <button onclick="addCategory()">Add Category</button>
+        <div id="categoryList"></div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", loadCategories);
+
+        function addCategory() {
+            const categoryInput = document.getElementById("categoryInput");
+            const categoryTitle = categoryInput.value.trim();
+            if (categoryTitle === "") return;
+
+            createCategoryElement(categoryTitle);
+            saveCategory(categoryTitle);
+            categoryInput.value = "";
+        }
+
+        function createCategoryElement(title) {
+            const categoryList = document.getElementById("categoryList");
+
+            // Create category container
+            const categoryDiv = document.createElement("div");
+            categoryDiv.classList.add("category-container");
+
+            // Category title
+            const categoryTitle = document.createElement("div");
+            categoryTitle.classList.add("category-title");
+            categoryTitle.textContent = title;
+
+            // Task container for the category
+            const taskList = document.createElement("div");
+            taskList.classList.add("task-list");
+
+            categoryDiv.appendChild(categoryTitle);
+            categoryDiv.appendChild(taskList);
+
+            // Create task input section for this category
+            const taskInputContainer = document.createElement("div");
+            taskInputContainer.classList.add("task-input-container");
+
+            const taskInput = document.createElement("input");
+            taskInput.type = "text";
+            taskInput.placeholder = "Enter note...";
+
+            const addTaskButton = document.createElement("button");
+            addTaskButton.textContent = "Add note";
+            addTaskButton.onclick = () => addTask(taskInput.value, title, taskInput);
+
+            taskInputContainer.appendChild(taskInput);
+            taskInputContainer.appendChild(addTaskButton);
+
+            categoryDiv.appendChild(taskInputContainer);
+            categoryList.appendChild(categoryDiv);
+
+            // Add tasks to the category if any
+            const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            const categoryTasks = tasks.filter(task => task.category === title);
+            categoryTasks.forEach(task => createTaskElement(task.text, task.checked, title));
+
+        }
+
+        function saveCategory(title) {
+            const categories = JSON.parse(localStorage.getItem("categories")) || [];
+            categories.push(title);
+            localStorage.setItem("categories", JSON.stringify(categories));
+        }
+
+        function addTask(taskText, category, inputField) {
+            if (taskText.trim() === "") return;
+
+            createTaskElement(taskText, false, category);
+            saveTask(taskText, false, category);
+            inputField.value = "";
+        }
+
+        function createTaskElement(text, checked, category) {
+            const categoryDiv = Array.from(document.getElementsByClassName("category-container"))
+                .find(cat => cat.querySelector(".category-title").textContent === category);
+            const taskList = categoryDiv.querySelector(".task-list");
+
+            const taskDiv = document.createElement("div");
+            taskDiv.classList.add("task-container");
+
+            const task = document.createElement("div");
+            task.classList.add("task");
+
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = checked;
+
+            const taskText = document.createElement("span");
+            taskText.textContent = text;
+
+            task.appendChild(checkbox);
+            task.appendChild(taskText);
+            taskDiv.appendChild(task);
+            taskList.appendChild(taskDiv);
+
+            task.onclick = () => {
+                checkbox.checked = !checkbox.checked;
+                toggleTask(text, checkbox.checked, category);
+            };
+
+            let tapCount = 0;
+            task.addEventListener("click", function() {
+                tapCount++;
+                setTimeout(() => {
+                    if (tapCount >= 3) {
+                        deleteTask(text, taskDiv, category);
+                    }
+                    tapCount = 0;
+                }, 300);
+            });
+
+            let holdTimeout;
+            task.addEventListener("mousedown", function() {
+                holdTimeout = setTimeout(() => {
+                    deleteTask(text, taskDiv, category);
+                }, 1000);
+            });
+            task.addEventListener("mouseup", function() {
+                clearTimeout(holdTimeout);
+            });
+        }
+
+        function saveTask(text, checked, category) {
+            const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            tasks.push({ text, checked, category });
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+        }
+
+        function toggleTask(text, checked, category) {
+            const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            const task = tasks.find(t => t.text === text && t.category === category);
+            if (task) {
+                task.checked = checked;
+                localStorage.setItem("tasks", JSON.stringify(tasks));
+            }
+        }
+
+        function deleteTask(text, taskElement, category) {
+            let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            tasks = tasks.filter(t => t.text !== text || t.category !== category);
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+            taskElement.remove();
+        }
+
+        function loadCategories() {
+            const categories = JSON.parse(localStorage.getItem("categories")) || [];
+            categories.forEach(category => createCategoryElement(category));
+        }
+    </script>
+</body>
+</html>
