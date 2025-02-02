@@ -176,6 +176,19 @@ button:hover {
 .task-input-container button:hover {
     background: #5a00d1;
 }
+#text {
+    position: absolute;
+    bottom: 30px; /* Container se thoda gap dene ke liye */
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 14px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 6px 12px;
+    border-radius: 5px;
+    text-align: center;
+}
+
 
 /* Responsive Design */
 @media (max-width: 600px) {
@@ -212,6 +225,7 @@ button:hover {
     .task-input-container button {
         padding: 4px;
     }
+   
 }
 
     </style>
@@ -226,7 +240,9 @@ button:hover {
         <button onclick="addCategory()">Add Category</button>
         <div id="categoryList"></div>
     </div>
-
+    <div id="text">
+        hold note to delete it
+    </div>
     <script>
         document.addEventListener("DOMContentLoaded", loadCategories);
 
